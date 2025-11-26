@@ -14,3 +14,5 @@ yarn-error.log*
 *.tsbuildinfo
 .cache/
 .claude/
+docs/
+.angular/
