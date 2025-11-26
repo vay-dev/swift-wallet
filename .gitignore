@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.vscode/
+.DS_Store
+coverage/
+db.sqlite3
+*.log
+.idea/
+*.iml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+.cache/
+.claude/
