@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0o#74yav1o3_&pj%2v5q=@z$n!)5z9)$14q$g90#39l)j7)s!0'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-0o#74yav1o3_&pj%2v5q=@z$n!)5z9)$14q$g90#39l)j7)s!0')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_spectacular',
     'authApi',
     'walletApi',
     'corsheaders',
@@ -187,4 +189,162 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FormParser',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# OpenAI API Configuration
+OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
+OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-4')
+OPENAI_MAX_TOKENS = config('OPENAI_MAX_TOKENS', default=500, cast=int)
+
+# Paystack API Configuration
+PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY', default='')
+PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY', default='')
+PAYSTACK_CALLBACK_URL = config('PAYSTACK_CALLBACK_URL', default='http://localhost:4200/payment/callback')
+
+# DRF Spectacular (Swagger) Configuration
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Swift Wallet API',
+    'DESCRIPTION': '''
+    # Welcome to Swift Wallet API Documentation
+
+    A comprehensive fintech API for mobile wallet management, featuring:
+
+    ## 🔐 Authentication & Security
+    - Phone number-based authentication with OTP
+    - JWT token authentication
+    - Device fingerprinting for one-device policy
+    - Face verification using AI
+    - Transaction PIN for secure payments
+
+    ## 💰 Wallet Management
+    - Mock wallet with starting balance
+    - Send/receive money between users
+    - Add money simulation
+    - Transaction history with filtering
+    - Real-time balance updates
+
+    ## 💳 Bill Payments
+    - Airtime & data purchases
+    - Electricity bill payments
+    - Cable TV subscriptions
+
+    ## 📊 Analytics & Insights
+    - Daily transaction summaries
+    - Spending patterns analysis
+    - Transaction categorization
+    - Custom date range reports
+
+    ## 🤖 AI Customer Service
+    - GPT-4 powered intelligent support
+    - Context-aware responses
+    - Session continuity
+    - Sentiment analysis
+
+    ## 🔗 Getting Started
+
+    1. **Sign Up**: Request OTP for your phone number
+    2. **Verify**: Complete signup with OTP verification
+    3. **Login**: Get your JWT access token
+    4. **Use API**: Include token in Authorization header
+
+    ## 📝 Authentication
+
+    Most endpoints require JWT authentication. Include the token in your requests:
+
+    ```
+    Authorization: Bearer <your_access_token>
+    ```
+
+    ## 🎯 API Response Format
+
+    All responses follow this structure:
+
+    ```json
+    {
+      "status": "success|error",
+      "message": "Description of the result",
+      "data": { ... }
+    }
+    ```
+
+    ## 📱 Demo Mode
+
+    This is a simulation environment:
+    - No real money transactions
+    - OTP codes are returned in responses for testing
+    - Starting balance: $1000 USD
+    - All payments are simulated
+
+    ---
+
+    For support or questions, use the AI customer service endpoint!
+    ''',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'TAGS': [
+        {'name': 'Authentication', 'description': 'User signup, login, and session management'},
+        {'name': 'User Profile', 'description': 'Profile management and personal information'},
+        {'name': 'Face Verification', 'description': 'AI-powered identity verification'},
+        {'name': 'Wallet', 'description': 'Wallet balance and account information'},
+        {'name': 'Transactions', 'description': 'Send money, add funds, and transaction history'},
+        {'name': 'Bill Payments', 'description': 'Airtime, data, electricity, and cable TV payments'},
+        {'name': 'Security', 'description': 'Transaction PIN and security settings'},
+        {'name': 'Beneficiaries', 'description': 'Manage saved recipients'},
+        {'name': 'Analytics', 'description': 'Transaction analytics and insights'},
+        {'name': 'AI Support', 'description': 'AI-powered customer service chatbot'},
+        {'name': 'Dashboard', 'description': 'Summary and overview data'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': r'/api/',
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'filter': True,
+        'tryItOutEnabled': True,
+        'syntaxHighlight.theme': 'monokai',
+        'defaultModelsExpandDepth': 2,
+        'defaultModelExpandDepth': 2,
+        'docExpansion': 'list',
+        'tagsSorter': 'alpha',
+        'operationsSorter': 'alpha',
+    },
+    'SWAGGER_UI_DIST': 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest',
+    'SWAGGER_UI_FAVICON_HREF': 'https://fastapi.tiangolo.com/img/favicon.png',
+    'REDOC_DIST': 'https://cdn.jsdelivr.net/npm/redoc@latest',
+    'SECURITY': [
+        {
+            'bearerAuth': []
+        }
+    ],
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'bearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+                'description': 'Enter your JWT access token obtained from login'
+            }
+        }
+    },
+    'PREPROCESSING_HOOKS': [],
+    'POSTPROCESSING_HOOKS': [],
+    'SERVERS': [
+        {
+            'url': 'http://localhost:8000',
+            'description': 'Development server'
+        },
+        {
+            'url': 'http://localhost:4200',
+            'description': 'Angular frontend (CORS enabled)'
+        }
+    ],
+    'CONTACT': {
+        'name': 'Swift Wallet Support',
+        'email': 'support@swiftwallet.demo'
+    },
+    'LICENSE': {
+        'name': 'MIT License'
+    },
 }
