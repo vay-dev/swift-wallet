@@ -1,0 +1,94 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="user-greeting">
+        <h1>Hello, {{ authStore.userFullName() }}!</h1>
+        <p>Welcome back to Swift Wallet</p>
+      </div>
+      <button class="btn-icon" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Balance Card -->
+  <div class="balance-card card bg-gradient-vibrant">
+    <div class="balance-header">
+      <span class="balance-label">Total Balance</span>
+      <span class="balance-currency">{{ walletStore.currency() }}</span>
+    </div>
+    <div class="balance-amount">
+      @if (walletStore.isLoading()) {
+        <div class="spinner"></div>
+      } @else {
+        <h2>{{ walletStore.balance() }}</h2>
+      }
+    </div>
+    <div class="account-number">
+      <span>Account: {{ walletStore.accountNumber() }}</span>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions">
+    <h3>Quick Actions</h3>
+    <div class="actions-grid">
+      @for (action of quickActions; track action.title) {
+        <button
+          class="action-card card"
+          [class]="'action-' + action.color"
+          (click)="navigateTo(action.route)"
+        >
+          <i class="fas {{ action.icon }} action-icon"></i>
+          <span class="action-title">{{ action.title }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Recent Transactions -->
+  <section class="recent-transactions">
+    <div class="section-header">
+      <h3>Recent Transactions</h3>
+      <button class="link" (click)="navigateTo('/wallet/transactions')">View All</button>
+    </div>
+
+    @if (walletStore.transactionLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading transactions...</p>
+      </div>
+    } @else if (walletStore.recentTransactions().length === 0) {
+      <div class="empty-state card">
+        <i class="fas fa-inbox empty-icon"></i>
+        <p>No transactions yet</p>
+        <button class="btn btn-primary" (click)="navigateTo('/wallet/send')">
+          Send Money
+        </button>
+      </div>
+    } @else {
+      <div class="transactions-list">
+        @for (tx of walletStore.recentTransactions(); track tx.reference) {
+          <div class="transaction-item card">
+            <div class="transaction-icon" [class]="'tx-' + tx.transaction_type">
+              <i class="fas" [class.fa-arrow-down]="tx.transaction_type === 'credit'" [class.fa-arrow-up]="tx.transaction_type === 'debit'"></i>
+            </div>
+            <div class="transaction-details">
+              <div class="transaction-title">
+                {{ tx.transaction_type === 'credit' ? 'Received from' : 'Sent to' }}
+                {{ tx.transaction_type === 'credit' ? tx.sender_phone : tx.recipient_phone }}
+              </div>
+              <div class="transaction-date">
+                {{ tx.created_at | date: 'MMM d, y - h:mm a' }}
+              </div>
+            </div>
+            <div class="transaction-amount" [class]="'amount-' + tx.transaction_type">
+              {{ tx.transaction_type === 'credit' ? '+' : '-' }}{{ tx.amount }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>

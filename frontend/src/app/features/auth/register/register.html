@@ -1,0 +1,129 @@
+<div class="auth-container">
+  <div class="auth-card card">
+    <!-- Logo -->
+    <div class="auth-logo">
+      <i class="fas fa-wallet logo-icon"></i>
+      <h2>Swift Wallet</h2>
+    </div>
+
+    <!-- Title -->
+    <div class="auth-header">
+      <h1>Create Account</h1>
+      <p>Join Swift Wallet for seamless money management</p>
+    </div>
+
+    <!-- Error Message -->
+    @if (error) {
+      <div class="alert alert-error">
+        {{ error }}
+      </div>
+    }
+
+    <!-- Register Form -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input
+          type="text"
+          id="fullName"
+          formControlName="full_name"
+          class="input"
+          placeholder="John Doe"
+          [class.invalid]="registerForm.get('full_name')?.invalid && registerForm.get('full_name')?.touched"
+        />
+        @if (registerForm.get('full_name')?.invalid && registerForm.get('full_name')?.touched) {
+          <span class="error-text">Please enter your full name</span>
+        }
+      </div>
+
+      <!-- Phone Number -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          formControlName="phone_number"
+          class="input"
+          placeholder="+1234567890"
+          [class.invalid]="registerForm.get('phone_number')?.invalid && registerForm.get('phone_number')?.touched"
+        />
+        @if (registerForm.get('phone_number')?.invalid && registerForm.get('phone_number')?.touched) {
+          <span class="error-text">Please enter a valid phone number</span>
+        }
+      </div>
+
+      <!-- Email (Optional) -->
+      <div class="form-group">
+        <label for="email">Email (Optional)</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="input"
+          placeholder="john@example.com"
+          [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+        />
+        @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+          <span class="error-text">Please enter a valid email</span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">6-Digit Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="input"
+          placeholder="Enter 6-digit password"
+          maxlength="6"
+          [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        />
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <span class="error-text">Password must be exactly 6 digits</span>
+        }
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirm_password"
+          class="input"
+          placeholder="Confirm your password"
+          maxlength="6"
+          [class.invalid]="registerForm.get('confirm_password')?.invalid && registerForm.get('confirm_password')?.touched"
+        />
+        @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirm_password')?.touched) {
+          <span class="error-text">Passwords do not match</span>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-full btn-lg"
+        [disabled]="registerForm.invalid || isLoading"
+      >
+        @if (isLoading) {
+          <span class="spinner spinner-sm"></span>
+          Sending OTP...
+        } @else {
+          Continue
+        }
+      </button>
+    </form>
+
+    <!-- Login Link -->
+    <div class="auth-footer">
+      <p>
+        Already have an account?
+        <a routerLink="/auth/login" class="link">Sign In</a>
+      </p>
+    </div>
+  </div>
+</div>

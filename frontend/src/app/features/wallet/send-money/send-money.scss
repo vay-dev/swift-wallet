@@ -1,0 +1,141 @@
+.send-money-container {
+  min-height: 100vh;
+  background: var(--background);
+  padding: 2rem 1rem;
+}
+
+.send-money-card {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+
+  .btn-back {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--divider);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background: var(--border);
+    }
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .spacer {
+    width: 40px;
+  }
+}
+
+.balance-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--divider);
+  border-radius: var(--radius-lg);
+  margin-bottom: 2rem;
+
+  .label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .balance {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+}
+
+.send-form {
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .input {
+      width: 100%;
+
+      &.invalid {
+        border-color: var(--error);
+      }
+    }
+
+    .amount-input-group {
+      position: relative;
+
+      .currency-symbol {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+      }
+
+      .amount-input {
+        padding-left: 2.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+    }
+
+    .pin-input {
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 0.5rem;
+    }
+
+    .error-text {
+      display: block;
+      color: var(--error);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+
+  &.alert-success {
+    background: var(--success-light);
+    color: var(--success);
+    border-left: 4px solid var(--success);
+  }
+
+  &.alert-error {
+    background: var(--error-light);
+    color: var(--error);
+    border-left: 4px solid var(--error);
+  }
+}

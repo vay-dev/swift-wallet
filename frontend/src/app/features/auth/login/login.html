@@ -1,0 +1,89 @@
+<div class="auth-container">
+  <div class="auth-card card">
+    <!-- Logo -->
+    <div class="auth-logo">
+      <i class="fas fa-wallet logo-icon"></i>
+      <h2>Swift Wallet</h2>
+    </div>
+
+    <!-- Title -->
+    <div class="auth-header">
+      <h1>Welcome Back</h1>
+      <p>Sign in to your account to continue</p>
+    </div>
+
+    <!-- Error Message -->
+    @if (authStore.error()) {
+      <div class="alert alert-error">
+        {{ authStore.error() }}
+      </div>
+    }
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Phone Number -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          formControlName="phone_number"
+          class="input"
+          placeholder="+1234567890"
+          [class.invalid]="loginForm.get('phone_number')?.invalid && loginForm.get('phone_number')?.touched"
+        />
+        @if (loginForm.get('phone_number')?.invalid && loginForm.get('phone_number')?.touched) {
+          <span class="error-text">Please enter a valid phone number</span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">6-Digit Password</label>
+        <div class="input-group">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="input"
+            placeholder="Enter 6-digit password"
+            maxlength="6"
+            [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          />
+          <button
+            type="button"
+            class="input-icon-btn"
+            (click)="togglePassword()"
+          >
+            {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <span class="error-text">Password must be exactly 6 digits</span>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-full btn-lg"
+        [disabled]="loginForm.invalid || authStore.isLoading()"
+      >
+        @if (authStore.isLoading()) {
+          <span class="spinner spinner-sm"></span>
+          Signing in...
+        } @else {
+          Sign In
+        }
+      </button>
+    </form>
+
+    <!-- Register Link -->
+    <div class="auth-footer">
+      <p>
+        Don't have an account?
+        <a routerLink="/auth/register" class="link">Create Account</a>
+      </p>
+    </div>
+  </div>
+</div>

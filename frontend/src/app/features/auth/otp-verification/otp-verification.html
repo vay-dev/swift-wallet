@@ -1,0 +1,69 @@
+<div class="auth-container">
+  <div class="auth-card card">
+    <!-- Logo -->
+    <div class="auth-logo">
+      <i class="fas fa-envelope-open logo-icon"></i>
+      <h2>Verify OTP</h2>
+    </div>
+
+    <!-- Title -->
+    <div class="auth-header">
+      <h1>Enter Verification Code</h1>
+      <p>We sent a code to {{ registerData?.phone_number }}</p>
+    </div>
+
+    <!-- Error Message -->
+    @if (authStore.error()) {
+      <div class="alert alert-error">
+        {{ authStore.error() }}
+      </div>
+    }
+
+    <!-- OTP Form -->
+    <form [formGroup]="otpForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- OTP Input -->
+      <div class="form-group">
+        <label for="otp">4-Digit Code</label>
+        <input
+          type="text"
+          id="otp"
+          formControlName="otp_code"
+          class="input otp-input"
+          placeholder="1234"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="\d*"
+          [class.invalid]="otpForm.get('otp_code')?.invalid && otpForm.get('otp_code')?.touched"
+        />
+        @if (otpForm.get('otp_code')?.invalid && otpForm.get('otp_code')?.touched) {
+          <span class="error-text">Please enter the 4-digit code</span>
+        }
+      </div>
+
+      <!-- Resend OTP -->
+      <div class="resend-section">
+        @if (!canResend) {
+          <p class="countdown-text">Resend code in {{ countdown }}s</p>
+        } @else {
+          <button type="button" class="btn-link" (click)="resendOTP()">
+            Resend Code
+          </button>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-full btn-lg"
+        [disabled]="otpForm.invalid || authStore.isLoading()"
+      >
+        @if (authStore.isLoading()) {
+          <span class="spinner spinner-sm"></span>
+          Verifying...
+        } @else {
+          Verify & Create Account
+        }
+      </button>
+    </form>
+  </div>
+</div>

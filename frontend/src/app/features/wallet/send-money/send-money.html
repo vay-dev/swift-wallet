@@ -1,0 +1,66 @@
+<div class="send-money-container">
+  <div class="send-money-card card">
+    <div class="page-header">
+      <button class="btn-back" (click)="goBack()"><i class="fas fa-arrow-left"></i></button>
+      <h1>Send Money</h1>
+      <div class="spacer"></div>
+    </div>
+
+    @if (successMessage) {
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i> {{ successMessage }}
+      </div>
+    }
+
+    @if (walletStore.error()) {
+      <div class="alert alert-error">{{ walletStore.error() }}</div>
+    }
+
+    <div class="balance-info">
+      <span class="label">Available Balance</span>
+      <span class="balance">{{ walletStore.balance() }} {{ walletStore.currency() }}</span>
+    </div>
+
+    <form [formGroup]="sendForm" (ngSubmit)="onSubmit()" class="send-form">
+      <div class="form-group">
+        <label for="recipient">Recipient Phone Number</label>
+        <input type="tel" id="recipient" formControlName="recipient_phone" class="input" placeholder="+1234567890" [class.invalid]="sendForm.get('recipient_phone')?.invalid && sendForm.get('recipient_phone')?.touched" />
+        @if (sendForm.get('recipient_phone')?.invalid && sendForm.get('recipient_phone')?.touched) {
+          <span class="error-text">Please enter a valid phone number</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <div class="amount-input-group">
+          <span class="currency-symbol">$</span>
+          <input type="number" id="amount" formControlName="amount" class="input amount-input" placeholder="0.00" min="1" step="0.01" [class.invalid]="sendForm.get('amount')?.invalid && sendForm.get('amount')?.touched" />
+        </div>
+        @if (sendForm.get('amount')?.invalid && sendForm.get('amount')?.touched) {
+          <span class="error-text">Please enter a valid amount</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="narration">Note (Optional)</label>
+        <input type="text" id="narration" formControlName="narration" class="input" placeholder="Payment for lunch" />
+      </div>
+
+      <div class="form-group">
+        <label for="pin">Transaction PIN</label>
+        <input type="password" id="pin" formControlName="transaction_pin" class="input pin-input" placeholder="Enter 4-digit PIN" maxlength="4" inputmode="numeric" [class.invalid]="sendForm.get('transaction_pin')?.invalid && sendForm.get('transaction_pin')?.touched" />
+        @if (sendForm.get('transaction_pin')?.invalid && sendForm.get('transaction_pin')?.touched) {
+          <span class="error-text">Please enter your 4-digit PIN</span>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg" [disabled]="sendForm.invalid || walletStore.transactionLoading()">
+        @if (walletStore.transactionLoading()) {
+          <span class="spinner spinner-sm"></span> Sending...
+        } @else {
+          Send Money
+        }
+      </button>
+    </form>
+  </div>
+</div>

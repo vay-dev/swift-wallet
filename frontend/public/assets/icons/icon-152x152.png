@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="152" height="152" viewBox="0 0 152 152" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6C63FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4ECDC4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF6B9D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="152" height="152" rx="22.8" fill="url(#grad)"/>
+
+  <!-- Wallet body -->
+  <rect x="30.400000000000002" y="45.6" width="91.2" height="68.4" fill="white" rx="4.56"/>
+
+  <!-- Wallet flap -->
+  <rect x="30.400000000000002" y="33.44" width="91.2" height="12.16" fill="white"/>
+
+  <!-- Card outline -->
+  <rect x="45.6" y="63.839999999999996" width="45.6" height="22.8"
+        fill="none" stroke="#6C63FF" stroke-width="2.28" rx="3.04"/>
+
+  <!-- Dollar sign -->
+  <text x="106.39999999999999" y="91.2"
+        font-family="Arial, sans-serif"
+        font-size="38"
+        font-weight="bold"
+        fill="#FFD700"
+        text-anchor="middle"
+        dominant-baseline="middle">$</text>
+
+  <!-- Swift Wallet badge -->
+  <circle cx="114" cy="38" r="12.16" fill="white"/>
+  <text x="114" y="40.28"
+        font-family="Arial, sans-serif"
+        font-size="12.16"
+        font-weight="bold"
+        fill="#6C63FF"
+        text-anchor="middle"
+        dominant-baseline="middle">⚡</text>
+</svg>

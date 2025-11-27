@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Swift Wallet Icons</title>
+</head>
+<body>
+    <h2>Swift Wallet Icon Generator</h2>
+    <p>Right-click on each canvas and "Save image as..." with the corresponding filename</p>
+
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+
+        function createIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#6C63FF');
+            gradient.addColorStop(0.5, '#4ECDC4');
+            gradient.addColorStop(1, '#FF6B9D');
+
+            // Draw rounded rectangle background
+            const radius = size * 0.15;
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+
+            // Draw wallet icon
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size * 0.04;
+
+            // Wallet body
+            const walletX = size * 0.2;
+            const walletY = size * 0.3;
+            const walletW = size * 0.6;
+            const walletH = size * 0.45;
+            const walletRadius = size * 0.05;
+
+            ctx.fillRect(walletX, walletY, walletW, walletH);
+
+            // Wallet flap
+            ctx.fillRect(walletX, walletY - size * 0.08, walletW, size * 0.08);
+
+            // Card outline
+            const cardX = walletX + size * 0.1;
+            const cardY = walletY + size * 0.12;
+            const cardW = walletW * 0.5;
+            const cardH = size * 0.15;
+
+            ctx.strokeStyle = '#6C63FF';
+            ctx.lineWidth = size * 0.02;
+            ctx.strokeRect(cardX, cardY, cardW, cardH);
+
+            // Dollar sign or currency symbol
+            ctx.font = `bold ${size * 0.25}px Arial`;
+            ctx.fillStyle = '#FFD700';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('$', size * 0.7, walletY + walletH * 0.6);
+
+            return canvas;
+        }
+
+        sizes.forEach(size => {
+            const canvas = createIcon(size);
+            const container = document.createElement('div');
+            container.style.marginBottom = '20px';
+
+            const label = document.createElement('p');
+            label.textContent = `icon-${size}x${size}.png`;
+            label.style.fontWeight = 'bold';
+
+            container.appendChild(label);
+            container.appendChild(canvas);
+            document.body.appendChild(container);
+        });
+    </script>
+</body>
+</html>

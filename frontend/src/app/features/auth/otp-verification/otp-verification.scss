@@ -1,0 +1,33 @@
+@import '../login/login.scss';
+
+.otp-input {
+  text-align: center;
+  font-size: 2rem;
+  letter-spacing: 1rem;
+  font-weight: 600;
+}
+
+.resend-section {
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  .countdown-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .btn-link {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.875rem;
+    padding: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
