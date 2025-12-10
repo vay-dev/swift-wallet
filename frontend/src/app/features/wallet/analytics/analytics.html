@@ -1,0 +1,197 @@
+<div class="analytics-container">
+  <!-- Header -->
+  <header class="analytics-header">
+    <button class="back-btn" (click)="navigateBack()" type="button">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="header-title">Analytics</h1>
+    <div class="header-spacer"></div>
+  </header>
+
+  <!-- Date Range Filter -->
+  <div class="date-filter">
+    @for (range of dateRanges; track range.value) {
+      <button
+        class="date-btn"
+        [class.active]="selectedDays() === range.value"
+        (click)="selectDateRange(range.value)"
+        type="button"
+      >
+        {{ range.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading analytics...</p>
+    </div>
+  }
+
+  <!-- Analytics Content -->
+  @if (!isLoading()) {
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="stat-card income-card">
+        <div class="stat-icon">
+          <i class="fas fa-arrow-down"></i>
+        </div>
+        <div class="stat-info">
+          <p class="stat-label">Total Income</p>
+          <h3 class="stat-value">${{ totalIncome().toFixed(2) }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card expense-card">
+        <div class="stat-icon">
+          <i class="fas fa-arrow-up"></i>
+        </div>
+        <div class="stat-info">
+          <p class="stat-label">Total Expenses</p>
+          <h3 class="stat-value">${{ totalExpenses().toFixed(2) }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card balance-card">
+        <div class="stat-icon">
+          <i class="fas fa-wallet"></i>
+        </div>
+        <div class="stat-info">
+          <p class="stat-label">Net Balance</p>
+          <h3 class="stat-value" [class.positive]="netBalance() >= 0" [class.negative]="netBalance() < 0">
+            ${{ netBalance().toFixed(2) }}
+          </h3>
+        </div>
+      </div>
+
+      <div class="stat-card transactions-card">
+        <div class="stat-icon">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+        <div class="stat-info">
+          <p class="stat-label">Transactions</p>
+          <h3 class="stat-value">{{ transactionCount() }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spending Overview Chart -->
+    <div class="chart-section card">
+      <h3 class="section-title">
+        <i class="fas fa-chart-bar"></i>
+        Spending Overview
+      </h3>
+
+      <div class="chart-container">
+        <div class="chart-bars">
+          @for (category of categories(); track category.name) {
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar-container">
+                <div
+                  class="chart-bar"
+                  [style.height]="getBarHeight(category.percentage)"
+                  [style.background]="category.color"
+                >
+                  <span class="bar-value">{{ category.percentage }}%</span>
+                </div>
+              </div>
+              <div class="chart-label">
+                <i class="fas" [class]="category.icon" [style.color]="category.color"></i>
+                <span class="label-text">{{ category.name.split(' ')[0] }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Spending Categories -->
+    <div class="categories-section card">
+      <h3 class="section-title">
+        <i class="fas fa-tags"></i>
+        Top Spending Categories
+      </h3>
+
+      <div class="categories-list">
+        @for (category of categories(); track category.name) {
+          <div class="category-item">
+            <div class="category-icon" [style.background]="category.color">
+              <i class="fas" [class]="category.icon"></i>
+            </div>
+            <div class="category-info">
+              <h4>{{ category.name }}</h4>
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  [style.width]="category.percentage + '%'"
+                  [style.background]="category.color"
+                ></div>
+              </div>
+            </div>
+            <div class="category-amount">
+              <span class="amount">${{ category.amount.toFixed(2) }}</span>
+              <span class="percentage">{{ category.percentage }}%</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Recent Large Transactions -->
+    <div class="large-transactions-section card">
+      <h3 class="section-title">
+        <i class="fas fa-list-ul"></i>
+        Recent Large Transactions
+      </h3>
+
+      <div class="transactions-list">
+        @for (transaction of largeTransactions(); track transaction.title) {
+          <div class="transaction-item">
+            <div class="transaction-icon" [style.background]="transaction.color">
+              <i class="fas" [class]="transaction.icon"></i>
+            </div>
+            <div class="transaction-info">
+              <h4>{{ transaction.title }}</h4>
+              <p>{{ transaction.category }} • {{ transaction.date }}</p>
+            </div>
+            <div class="transaction-amount" [class.credit]="transaction.amount > 0" [class.debit]="transaction.amount < 0">
+              {{ transaction.amount > 0 ? '+' : '' }}${{ Math.abs(transaction.amount).toFixed(2) }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <button class="btn btn-outline btn-full view-all-btn" type="button">
+        View All Transactions
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Insights Section -->
+    <div class="insights-section card">
+      <h3 class="section-title">
+        <i class="fas fa-lightbulb"></i>
+        Financial Insights
+      </h3>
+
+      <div class="insights-list">
+        <div class="insight-item success">
+          <i class="fas fa-check-circle"></i>
+          <p>You spent 15% less on dining this week compared to last week!</p>
+        </div>
+
+        <div class="insight-item warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Your entertainment expenses are 20% higher than your monthly average.</p>
+        </div>
+
+        <div class="insight-item info">
+          <i class="fas fa-info-circle"></i>
+          <p>You're on track to save $500 this month if you maintain current spending.</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

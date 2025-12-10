@@ -1,0 +1,369 @@
+<div class="settings-container">
+  <!-- Header -->
+  <header class="settings-header">
+    <button class="back-btn" (click)="navigateBack()" type="button">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="header-title">Settings</h1>
+    <div class="header-spacer"></div>
+  </header>
+
+  <!-- Message Alert -->
+  @if (message()) {
+    <div class="message-alert" [class.success]="message()?.type === 'success'" [class.error]="message()?.type === 'error'">
+      <i class="fas" [class.fa-check-circle]="message()?.type === 'success'" [class.fa-exclamation-circle]="message()?.type === 'error'"></i>
+      <span>{{ message()?.text }}</span>
+    </div>
+  }
+
+  <!-- Profile Section -->
+  <div class="profile-section card">
+    <div class="profile-picture-wrapper">
+      <div class="profile-picture-container">
+        <img
+          [src]="previewUrl() || getProfilePictureUrl()"
+          alt="Profile Picture"
+          class="profile-picture"
+        />
+        <div class="camera-overlay" (click)="fileInput.click()">
+          <i class="fas fa-camera"></i>
+        </div>
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          style="display: none;"
+        />
+      </div>
+
+      @if (selectedFile()) {
+        <div class="upload-actions">
+          <button
+            class="btn btn-sm btn-primary"
+            (click)="uploadProfilePicture()"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="spinner-sm"></span>
+            }
+            Upload Photo
+          </button>
+          <button
+            class="btn btn-sm btn-ghost"
+            (click)="selectedFile.set(null); previewUrl.set(null)"
+            [disabled]="isLoading()"
+          >
+            Cancel
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="profile-info">
+      <h2 class="profile-name">{{ authStore.user()?.full_name || 'User' }}</h2>
+      <p class="profile-email">{{ authStore.user()?.email }}</p>
+      @if (authStore.user()?.profile?.bio) {
+        <p class="profile-bio">{{ authStore.user()?.profile?.bio }}</p>
+      }
+    </div>
+
+    <button
+      class="btn btn-outline edit-profile-btn"
+      (click)="toggleEditProfile()"
+      type="button"
+    >
+      <i class="fas" [class.fa-edit]="!isEditingProfile()" [class.fa-times]="isEditingProfile()"></i>
+      {{ isEditingProfile() ? 'Cancel' : 'Edit Profile' }}
+    </button>
+  </div>
+
+  <!-- Edit Profile Form -->
+  @if (isEditingProfile()) {
+    <div class="edit-form card animate-fade-in-up">
+      <h3 class="form-title">
+        <i class="fas fa-user-edit"></i>
+        Edit Profile Information
+      </h3>
+
+      <form (ngSubmit)="saveProfile()" class="profile-form">
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h4 class="section-title">Basic Information</h4>
+
+          <div class="form-group">
+            <label for="full_name">
+              <i class="fas fa-user"></i>
+              Full Name
+            </label>
+            <input
+              id="full_name"
+              type="text"
+              class="input"
+              [(ngModel)]="formData().full_name"
+              name="full_name"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">
+              <i class="fas fa-envelope"></i>
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              class="input"
+              [(ngModel)]="formData().email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="bio">
+              <i class="fas fa-quote-left"></i>
+              Bio
+            </label>
+            <textarea
+              id="bio"
+              class="textarea"
+              [(ngModel)]="formData().bio"
+              name="bio"
+              placeholder="Tell us about yourself"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="date_of_birth">
+              <i class="fas fa-calendar"></i>
+              Date of Birth
+            </label>
+            <input
+              id="date_of_birth"
+              type="date"
+              class="input"
+              [(ngModel)]="formData().date_of_birth"
+              name="date_of_birth"
+            />
+          </div>
+        </div>
+
+        <!-- Location Information -->
+        <div class="form-section">
+          <h4 class="section-title">Location</h4>
+
+          <div class="form-group">
+            <label for="address">
+              <i class="fas fa-map-marker-alt"></i>
+              Address
+            </label>
+            <input
+              id="address"
+              type="text"
+              class="input"
+              [(ngModel)]="formData().address"
+              name="address"
+              placeholder="Enter your address"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">
+                <i class="fas fa-city"></i>
+                City
+              </label>
+              <input
+                id="city"
+                type="text"
+                class="input"
+                [(ngModel)]="formData().city"
+                name="city"
+                placeholder="City"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="country">
+                <i class="fas fa-globe"></i>
+                Country
+              </label>
+              <input
+                id="country"
+                type="text"
+                class="input"
+                [(ngModel)]="formData().country"
+                name="country"
+                placeholder="Country"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-primary btn-full"
+          [disabled]="isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="spinner-sm"></span>
+          }
+          @if (!isLoading()) {
+            <i class="fas fa-save"></i>
+          }
+          Save Changes
+        </button>
+      </form>
+    </div>
+  }
+
+  <!-- Preferences Section -->
+  <div class="preferences-section card">
+    <h3 class="section-header">
+      <i class="fas fa-cog"></i>
+      Preferences
+    </h3>
+
+    <div class="preference-item">
+      <div class="preference-info">
+        <div class="preference-icon dark-mode-icon">
+          <i class="fas fa-moon"></i>
+        </div>
+        <div class="preference-text">
+          <h4>Dark Mode</h4>
+          <p>Switch between light and dark theme</p>
+        </div>
+      </div>
+      <label class="toggle-switch">
+        <input
+          type="checkbox"
+          [checked]="themeService.isDark()"
+          (change)="toggleTheme()"
+        />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="preference-item">
+      <div class="preference-info">
+        <div class="preference-icon notification-icon">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="preference-text">
+          <h4>Notifications</h4>
+          <p>Manage your notification preferences</p>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ghost">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="preference-item">
+      <div class="preference-info">
+        <div class="preference-icon security-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="preference-text">
+          <h4>Security</h4>
+          <p>Manage password and security settings</p>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ghost">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="preference-item">
+      <div class="preference-info">
+        <div class="preference-icon language-icon">
+          <i class="fas fa-language"></i>
+        </div>
+        <div class="preference-text">
+          <h4>Language</h4>
+          <p>Choose your preferred language</p>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ghost">
+        English
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Account Section -->
+  <div class="account-section card">
+    <h3 class="section-header">
+      <i class="fas fa-user-circle"></i>
+      Account
+    </h3>
+
+    <div class="account-item">
+      <div class="account-info">
+        <div class="account-icon help-icon">
+          <i class="fas fa-question-circle"></i>
+        </div>
+        <div class="account-text">
+          <h4>Help & Support</h4>
+          <p>Get help or contact support</p>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ghost">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="account-item">
+      <div class="account-info">
+        <div class="account-icon privacy-icon">
+          <i class="fas fa-lock"></i>
+        </div>
+        <div class="account-text">
+          <h4>Privacy Policy</h4>
+          <p>Read our privacy policy</p>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ghost">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="account-item">
+      <div class="account-info">
+        <div class="account-icon terms-icon">
+          <i class="fas fa-file-contract"></i>
+        </div>
+        <div class="account-text">
+          <h4>Terms of Service</h4>
+          <p>View terms and conditions</p>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ghost">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Logout Button -->
+  <div class="logout-section">
+    <button
+      class="btn btn-logout btn-full"
+      (click)="logout()"
+      type="button"
+    >
+      <i class="fas fa-sign-out-alt"></i>
+      Logout
+    </button>
+  </div>
+
+  <!-- App Version -->
+  <div class="app-version">
+    <p>Swift Wallet v1.0.0</p>
+  </div>
+</div>

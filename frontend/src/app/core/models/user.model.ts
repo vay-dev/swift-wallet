@@ -1,3 +1,12 @@
+export interface UserProfile {
+  display_picture?: string;
+  bio?: string;
+  date_of_birth?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+}
+
 export interface User {
   id: number;
   phone_number: string;
@@ -5,7 +14,8 @@ export interface User {
   full_name: string;
   email?: string;
   is_verified: boolean;
-  profile_picture?: string;
+  date_joined?: string;
+  profile?: UserProfile;
 }
 
 export interface AuthTokens {

@@ -15,6 +15,9 @@ export class Dashboard implements OnInit {
   walletStore = inject(WalletStore);
   private router = inject(Router);
 
+  showBalance = true;
+  copied = false;
+
   quickActions = [
     { icon: 'fa-paper-plane', title: 'Send Money', route: '/wallet/send', color: 'primary' },
     { icon: 'fa-plus-circle', title: 'Add Money', route: '/wallet/add', color: 'secondary' },
@@ -26,6 +29,20 @@ export class Dashboard implements OnInit {
     // Load wallet data
     this.walletStore.loadBalance();
     this.walletStore.loadTransactions({ page: 1, reset: true });
+  }
+
+  toggleBalanceVisibility(): void {
+    this.showBalance = !this.showBalance;
+  }
+
+  copyAccountNumber(): void {
+    const accountNumber = this.walletStore.accountNumber();
+    navigator.clipboard.writeText(accountNumber).then(() => {
+      this.copied = true;
+      setTimeout(() => {
+        this.copied = false;
+      }, 2000);
+    });
   }
 
   logout(): void {

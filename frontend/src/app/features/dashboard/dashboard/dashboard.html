@@ -2,32 +2,59 @@
   <!-- Header -->
   <header class="dashboard-header">
     <div class="header-content">
-      <div class="user-greeting">
-        <h1>Hello, {{ authStore.userFullName() }}!</h1>
-        <p>Welcome back to Swift Wallet</p>
+      <div class="user-info">
+        <div class="avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="user-greeting">
+          <h1>Hello, {{ authStore.userFullName() }}!</h1>
+          <p>Welcome back to Swift Wallet</p>
+        </div>
       </div>
-      <button class="btn-icon" (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-      </button>
+      <div class="header-actions">
+        <button class="btn-icon settings-btn" (click)="navigateTo('/settings')" title="Settings">
+          <i class="fas fa-cog"></i>
+        </button>
+        <button class="btn-icon logout-btn" (click)="logout()" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
     </div>
   </header>
 
   <!-- Balance Card -->
   <div class="balance-card card bg-gradient-vibrant">
     <div class="balance-header">
-      <span class="balance-label">Total Balance</span>
-      <span class="balance-currency">{{ walletStore.currency() }}</span>
+      <div>
+        <span class="balance-label">Total Balance</span>
+        <div class="balance-amount">
+          @if (walletStore.isLoading()) {
+            <div class="spinner"></div>
+          } @else {
+            <h2><span class="currency-symbol">{{ walletStore.currency() }}</span> {{ walletStore.balance() }}</h2>
+          }
+        </div>
+      </div>
+      <button class="eye-btn" (click)="toggleBalanceVisibility()" title="Toggle visibility">
+        <i class="fas" [class.fa-eye]="showBalance" [class.fa-eye-slash]="!showBalance"></i>
+      </button>
     </div>
-    <div class="balance-amount">
-      @if (walletStore.isLoading()) {
-        <div class="spinner"></div>
-      } @else {
-        <h2>{{ walletStore.balance() }}</h2>
-      }
+
+    <div class="account-number-section">
+      <div class="account-info">
+        <span class="account-label">Account Number</span>
+        <span class="account-num">{{ walletStore.accountNumber() }}</span>
+      </div>
+      <button class="copy-btn" (click)="copyAccountNumber()" title="Copy account number">
+        <i class="fas fa-copy"></i>
+      </button>
     </div>
-    <div class="account-number">
-      <span>Account: {{ walletStore.accountNumber() }}</span>
-    </div>
+
+    @if (copied) {
+      <div class="copied-toast">
+        <i class="fas fa-check"></i> Copied!
+      </div>
+    }
   </div>
 
   <!-- Quick Actions -->

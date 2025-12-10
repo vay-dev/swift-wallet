@@ -1,0 +1,185 @@
+<div class="transaction-history-container">
+  <!-- Header -->
+  <header class="history-header">
+    <button class="back-btn" (click)="goBack()" type="button">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="header-title">Transaction History</h1>
+    <button class="refresh-btn" (click)="pullToRefresh()" [class.spinning]="isRefreshing()" type="button">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+  </header>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search transactions..."
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)"
+      />
+      @if (searchQuery()) {
+        <button class="clear-btn" (click)="searchQuery.set('')" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button
+      class="filter-tab"
+      [class.active]="filterType() === 'all'"
+      (click)="filterTransactions('all')"
+      type="button"
+    >
+      <i class="fas fa-list"></i>
+      <span>All</span>
+    </button>
+    <button
+      class="filter-tab credit-tab"
+      [class.active]="filterType() === 'credit'"
+      (click)="filterTransactions('credit')"
+      type="button"
+    >
+      <i class="fas fa-arrow-down"></i>
+      <span>Received</span>
+    </button>
+    <button
+      class="filter-tab debit-tab"
+      [class.active]="filterType() === 'debit'"
+      (click)="filterTransactions('debit')"
+      type="button"
+    >
+      <i class="fas fa-arrow-up"></i>
+      <span>Sent</span>
+    </button>
+    <button
+      class="filter-tab bills-tab"
+      [class.active]="filterType() === 'bills'"
+      (click)="filterTransactions('bills')"
+      type="button"
+    >
+      <i class="fas fa-file-invoice"></i>
+      <span>Bills</span>
+    </button>
+  </div>
+
+  <!-- Refresh Indicator -->
+  @if (isRefreshing()) {
+    <div class="refresh-indicator">
+      <div class="spinner-sm"></div>
+      <span>Refreshing...</span>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (walletStore.transactionLoading() && filteredTransactions.length === 0) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading transactions...</p>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!walletStore.transactionLoading() && filteredTransactions.length === 0) {
+    <div class="empty-state card">
+      <div class="empty-icon">
+        <i class="fas fa-inbox"></i>
+      </div>
+      <h3>No Transactions Found</h3>
+      <p>
+        @if (searchQuery()) {
+          No transactions match your search
+        } @else if (filterType() !== 'all') {
+          No {{ filterType() }} transactions yet
+        } @else {
+          You haven't made any transactions yet
+        }
+      </p>
+      @if (searchQuery() || filterType() !== 'all') {
+        <button class="btn btn-outline" (click)="searchQuery.set(''); filterType.set('all')" type="button">
+          Clear Filters
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Transactions List -->
+  @if (filteredTransactions.length > 0) {
+    <div class="transactions-list">
+      @for (tx of filteredTransactions; track tx.reference) {
+        <div class="transaction-card card">
+          <div class="transaction-icon" [style.background]="getTransactionColor(tx)">
+            <i class="fas" [class]="getTransactionIcon(tx)"></i>
+          </div>
+
+          <div class="transaction-details">
+            <h4 class="transaction-title">{{ getTransactionTitle(tx) }}</h4>
+
+            <div class="transaction-meta">
+              <span class="transaction-date">
+                <i class="fas fa-calendar-alt"></i>
+                {{ formatDate(tx.created_at) }}
+              </span>
+              <span class="transaction-time">
+                <i class="fas fa-clock"></i>
+                {{ formatTime(tx.created_at) }}
+              </span>
+            </div>
+
+            <div class="transaction-ref">
+              <i class="fas fa-hashtag"></i>
+              {{ tx.reference }}
+            </div>
+          </div>
+
+          <div class="transaction-right">
+            <div
+              class="transaction-amount"
+              [class.credit]="tx.transaction_type === 'credit'"
+              [class.debit]="tx.transaction_type === 'debit'"
+            >
+              {{ tx.transaction_type === 'credit' ? '+' : '-' }}${{ tx.amount }}
+            </div>
+
+            <span
+              class="status-badge"
+              [class.completed]="tx.status === 'completed'"
+              [class.pending]="tx.status === 'pending'"
+              [class.failed]="tx.status === 'failed'"
+            >
+              <i
+                class="fas"
+                [class.fa-check-circle]="tx.status === 'completed'"
+                [class.fa-clock]="tx.status === 'pending'"
+                [class.fa-times-circle]="tx.status === 'failed'"
+              ></i>
+              {{ tx.status }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Load More Indicator -->
+    @if (walletStore.transactionLoading() && filteredTransactions.length > 0) {
+      <div class="load-more-indicator">
+        <div class="spinner-sm"></div>
+        <span>Loading more...</span>
+      </div>
+    }
+
+    <!-- End of List -->
+    @if (!walletStore.hasMore() && !walletStore.transactionLoading()) {
+      <div class="end-message">
+        <i class="fas fa-check"></i>
+        You've reached the end
+      </div>
+    }
+  }
+</div>

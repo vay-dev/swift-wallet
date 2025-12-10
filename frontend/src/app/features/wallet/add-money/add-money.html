@@ -1,0 +1,144 @@
+<div class="add-money-container">
+  <!-- Header -->
+  <header class="add-money-header">
+    <button class="back-btn" (click)="navigateBack()" type="button">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="header-title">Add Money</h1>
+    <div class="header-spacer"></div>
+  </header>
+
+  <!-- Message Alert -->
+  @if (message()) {
+    <div class="message-alert" [class.success]="message()?.type === 'success'" [class.error]="message()?.type === 'error'">
+      <i class="fas" [class.fa-check-circle]="message()?.type === 'success'" [class.fa-exclamation-circle]="message()?.type === 'error'"></i>
+      <span>{{ message()?.text }}</span>
+    </div>
+  }
+
+  <!-- Success Animation -->
+  @if (showSuccess()) {
+    <div class="success-overlay">
+      <div class="success-card animate-fade-in-up">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Success!</h2>
+        <p>Money added to your wallet successfully</p>
+        <div class="success-amount">+${{ amount() }}</div>
+      </div>
+    </div>
+  }
+
+  <!-- Current Balance Card -->
+  <div class="balance-card card">
+    <div class="balance-icon">
+      <i class="fas fa-wallet"></i>
+    </div>
+    <div class="balance-info">
+      <p class="balance-label">Current Balance</p>
+      <h2 class="balance-amount">{{ walletStore.currency() }} {{ walletStore.balance() }}</h2>
+    </div>
+  </div>
+
+  <!-- Amount Input Section -->
+  <div class="amount-section card">
+    <h3 class="section-title">
+      <i class="fas fa-money-bill-wave"></i>
+      Enter Amount
+    </h3>
+
+    <div class="amount-input-wrapper">
+      <span class="currency-symbol">$</span>
+      <input
+        type="number"
+        class="amount-input"
+        [(ngModel)]="amount"
+        placeholder="0.00"
+        min="1"
+        max="10000"
+        step="0.01"
+      />
+    </div>
+
+    <!-- Preset Amounts -->
+    <div class="preset-amounts">
+      @for (preset of presetAmounts; track preset) {
+        <button
+          class="preset-btn"
+          [class.active]="amount() === preset.toString()"
+          (click)="selectPresetAmount(preset)"
+          type="button"
+        >
+          ${{ preset }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Payment Method Selection -->
+  <div class="payment-methods-section card">
+    <h3 class="section-title">
+      <i class="fas fa-credit-card"></i>
+      Payment Method
+    </h3>
+
+    <div class="payment-methods">
+      @for (method of paymentMethods; track method.id) {
+        <div
+          class="payment-method-card"
+          [class.selected]="selectedMethod() === method.id"
+          (click)="selectPaymentMethod(method.id)"
+        >
+          <div class="method-icon" [style.background]="method.gradient">
+            <i class="fas" [class]="method.icon"></i>
+          </div>
+          <div class="method-info">
+            <h4>{{ method.name }}</h4>
+            <p>{{ method.description }}</p>
+          </div>
+          <div class="method-check">
+            <i class="fas fa-check-circle"></i>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Optional Description -->
+  <div class="description-section card">
+    <h3 class="section-title">
+      <i class="fas fa-sticky-note"></i>
+      Description (Optional)
+    </h3>
+    <textarea
+      class="textarea"
+      [(ngModel)]="description"
+      placeholder="Add a note for this transaction..."
+      rows="3"
+    ></textarea>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="submit-section">
+    <button
+      class="btn btn-add-money btn-full"
+      (click)="addMoney()"
+      [disabled]="!isAmountValid() || isLoading()"
+      type="button"
+    >
+      @if (isLoading()) {
+        <span class="spinner"></span>
+      }
+      @if (!isLoading()) {
+        <i class="fas fa-plus-circle"></i>
+      }
+      Add ${{ amount() || '0.00' }} to Wallet
+    </button>
+
+    <p class="submit-info">
+      <i class="fas fa-lock"></i>
+      Your payment information is secure
+    </p>
+  </div>
+</div>

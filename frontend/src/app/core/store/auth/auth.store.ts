@@ -133,6 +133,12 @@ export const AuthStore = signalStore(
     // Clear error
     clearError: () => {
       patchState(store, { error: null });
+    },
+
+    // Update user
+    updateUser: (user: User) => {
+      patchState(store, { user });
+      localStorage.setItem('user', JSON.stringify(user));
     }
   }))
 );

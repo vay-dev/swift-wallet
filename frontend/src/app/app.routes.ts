@@ -43,10 +43,27 @@ export const routes: Routes = [
         loadComponent: () => import('./features/wallet/send-money/send-money').then(m => m.SendMoney)
       },
       {
+        path: 'add',
+        loadComponent: () => import('./features/wallet/add-money/add-money').then(m => m.AddMoney)
+      },
+      {
+        path: 'transactions',
+        loadComponent: () => import('./features/wallet/transaction-history/transaction-history').then(m => m.TransactionHistory)
+      },
+      {
+        path: 'analytics',
+        loadComponent: () => import('./features/wallet/analytics/analytics').then(m => m.AnalyticsComponent)
+      },
+      {
         path: 'chat',
         loadComponent: () => import('./features/wallet/ai-chat/ai-chat').then(m => m.AiChat)
       }
     ]
+  },
+  {
+    path: 'settings',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/settings/settings/settings').then(m => m.Settings)
   },
   {
     path: '**',

@@ -16,3 +16,4 @@ yarn-error.log*
 .claude/
 docs/
 .angular/
+media/

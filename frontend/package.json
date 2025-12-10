@@ -28,6 +28,7 @@
     "@angular/forms": "^20.2.0",
     "@angular/platform-browser": "^20.2.0",
     "@angular/router": "^20.2.0",
+    "@angular/service-worker": "^20.3.14",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@ngrx/effects": "^20.1.0",
     "@ngrx/entity": "^20.1.0",
